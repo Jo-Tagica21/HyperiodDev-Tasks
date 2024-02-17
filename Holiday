@@ -1,0 +1,152 @@
+# Holiday Planner
+
+menus = [
+
+# Destinations
+"Paris          ",
+"Bangkok        ",
+"Washington, D.C",
+"Suva           ",
+
+# Vehicles to hire
+"Toyota         ",
+"Renault        ",
+"Ford           ",
+"BMW            ",
+
+# Hotels
+"Travel Lodge   ",
+"Premier Inn    ",
+"Holiday Inn    ",
+"Hilton Hotel   "
+]
+
+prices = {
+
+# Destination Price
+menus[0]:65,
+menus[1]:75,
+menus[2]:85,
+menus[3]:95,
+
+# Vehicle Hire Price per day
+menus[4]:25,
+menus[5]:35,
+menus[6]:45,
+menus[7]:55,
+
+# Hotel Price Per Night
+menus[8]:125,
+menus[9]:137,
+menus[10]:145,
+menus[11]:155
+}
+
+
+def display_menu(menus):
+    """
+    Display a menu
+    """
+    print()
+    for i, number_option in enumerate(menus,1):
+        print(i, number_option, "£"+str(prices[number_option]), sep=" - ")
+
+def print_title(title):
+    """
+    Title formatted to center terminal
+    """
+    print()
+    print("-"*50)
+    print(("  "*(15-(len(title)//2))), title)
+    print("-"*50)
+    print("\nWelcome to Holiday Planner\nNavigate and Plan Your Holiday")
+
+print_title("Holiday Planner")
+
+# While loop to continuously iterate through the menus
+while True:
+
+    # Try exception declared to anticipate errors
+    try:
+
+        # Display destination menu
+        display_menu(menus[:4])
+        city_flight = int(input("\nSelect Your Destination: "))
+
+        def plane_cost(a, b = 1):
+            # Return plane cost
+            c = a*b
+            return c
+
+        # Display vehicle hire menu
+        display_menu(menus[4:8])
+        user_vehicle = int(input("\nSelect your vehicle: "))
+        rental_days = int(input("How many days would you like to hire the vehicle: "))
+
+        def car_rental(a, b = rental_days):
+            """
+            Return the total of renting a vehicle
+            """
+            c = a*b
+            return c
+
+        # Display hotel menu
+        display_menu(menus[8:])
+        user_hotel = int(input("\nSelect your hotel: "))
+        num_nights = int(input("How many nights: "))
+        print("\nHere are your details for your holifday:\n ")
+
+        def hotel_cost(a, b = num_nights):
+            """
+            Returns total cost of number of nights at hotel
+            """
+            c = a*b
+            return c
+
+        def holiday_cost(a,b,c):
+            """
+            Adds three given values
+            """
+            d = a+b+c
+            return d
+        break
+
+    # Value error exception to anticipate not int input
+    except ValueError:
+        print("Invalid input, try again.")
+        continue
+
+# File opened to store holiday details
+with open("Holiday Itinerary.txt", "w+") as itinerary_file:
+    print()
+    itinerary_file.write("Holiday Itinerary Details\n\n")
+
+    # Tabulate imported to tabulate holiday details
+    try:
+        from tabulate import tabulate
+
+        # Variable declared to store values as list to tabulate
+        table =[
+            [menus[city_flight-1], menus[user_hotel+7], menus[user_vehicle+3]],
+            ["One Way", f"{num_nights} day(s)", f"{rental_days} day(s)"],
+            # Plane Price
+            [plane_cost(f"£ {prices[menus[city_flight-1]]}"),
+            # Total of hotel cost
+            hotel_cost(prices[menus[user_hotel+7]]),
+            # Total of car rental
+            car_rental(prices[menus[user_vehicle+3]]), 
+            # Total of price of holiday
+            holiday_cost(hotel_cost(prices[menus[user_hotel+7]],num_nights),
+                        car_rental(prices[menus[user_vehicle+3]],rental_days),
+                        plane_cost(prices[menus[city_flight-1]]))]
+        ]
+        # Headers for the tabulate
+        my_headers = ["Destination", "Hotel", "Vehicle Hire", "Total"]
+        print(tabulate(table, headers=my_headers))
+        # Tabulate written to file
+        itinerary_file.write(tabulate(table, headers=my_headers))
+        print("\nA copy of a file will be sent to you momentarily.")
+        print("Thank You For Using Our Services\nEnjoy Your Trip!")
+
+    except ModuleNotFoundError:
+        print("Tabulate module is not installed.\nUnable to tabulate.")
